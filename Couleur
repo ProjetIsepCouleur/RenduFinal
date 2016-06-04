@@ -1,0 +1,43 @@
+import java.util.ArrayList;
+import java.awt.Color;
+
+public class Couleur {
+	
+private ArrayList<Integer> liste;
+private Color C;
+
+public Couleur(ArrayList<Integer> liste, Color C) {
+	this.liste = liste;
+	this.C= C;
+}
+
+public ArrayList<Integer> getListe() {
+	return liste;
+}
+
+public void addListe(int ajout) {
+	this.liste.add(ajout);
+}
+
+public void viderCouleur(ArrayList<Integer> possessions){
+	this.liste.removeAll(possessions);
+}
+
+public Color getCouleur(){
+	return this.C;
+}
+
+public static Couleur [] initialisation(ArrayList<Integer>  r, ArrayList<Integer> o, ArrayList<Integer> j, ArrayList<Integer> ve, ArrayList<Integer> b, ArrayList<Integer> vi){
+	Color orangeC= new Color(255,150,0);
+	Color violetC= new Color(200,0,255);
+	Color vertC= new Color(15,200,0);
+	Couleur rouge= new Couleur(r, Color.red);
+	Couleur orange= new Couleur(o, orangeC);
+	Couleur jaune= new Couleur(j, Color.yellow);
+	Couleur vert= new Couleur(ve, vertC);
+	Couleur bleu= new Couleur(b, Color.blue);
+	Couleur violet= new Couleur(vi, violetC);
+	Couleur [] listeCouleurs = {rouge,orange,jaune,vert,bleu,violet};
+	return listeCouleurs;
+}
+}
