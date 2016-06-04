@@ -1,0 +1,60 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+
+public class Fenetre extends JFrame{
+
+
+public Fenetre(Couleur [] listeCouleurs, Joueur [] listeJoueurs, int height, int width, int format){
+    
+	this.setTitle("Jeu des 6 couleurs");
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
+    //Fenêtre de la taille de l'écran
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
+    int taskBarSize = scnMax.bottom;
+    this.setSize(screenSize.width, screenSize.height - taskBarSize);
+	
+    // Création du PanelCases
+    int [] couleursAutorisees= Tour.trouverCouleursAutorisees(listeCouleurs, listeJoueurs);
+    PanelCases pan = new PanelCases(listeCouleurs, couleursAutorisees, listeJoueurs, height, width, format);
+    pan.setBackground(Color.white);
+    
+    // Création des panels pour réguler la taille de PanelCases
+    JPanel colonneGauche = new JPanel();
+    colonneGauche.setBackground(Color.white);
+    
+    JPanel colonneDroite = new JPanel();
+    colonneDroite.setBackground(Color.white);
+    
+    JPanel bandeSud = new JPanel();
+    bandeSud.setBackground(Color.white);
+    
+    // La hauteur de la bande est réglée pour que le rapport PanelCases.height sur height tombe juste
+    // Les bandes de côté font en sorte que la PanelCases.width soit égale à PanelCases.height
+    if(format==0){
+    colonneGauche.setPreferredSize(new Dimension((screenSize.width-(screenSize.height - taskBarSize-(screenSize.height - taskBarSize-35)%height))/2+6, screenSize.height - taskBarSize));
+    colonneDroite.setPreferredSize(new Dimension((screenSize.width-(screenSize.height - taskBarSize-35-(screenSize.height - taskBarSize-35)%height))/2+6, screenSize.height - taskBarSize));
+    bandeSud.setPreferredSize(new Dimension(screenSize.width-2*colonneGauche.getWidth(),(screenSize.height - taskBarSize-35)%height));
+    }
+    else{
+    	pan.setPreferredSize(new Dimension(screenSize.width,screenSize.height));
+    }
+    this.getContentPane().add(colonneGauche, BorderLayout.WEST);
+    this.getContentPane().add(pan, BorderLayout.CENTER);
+    this.getContentPane().add(colonneDroite, BorderLayout.EAST);
+    this.getContentPane().add(bandeSud, BorderLayout.SOUTH);
+    
+    this.setResizable(false);
+    this.setVisible(true); 
+    
+}
+
+}
+
