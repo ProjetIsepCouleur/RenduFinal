@@ -1,0 +1,108 @@
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.HashSet;
+public class Joueur {
+	
+private ArrayList<Integer> possessions;
+private HashSet<Integer> accessibles;
+private int codeCouleur;
+private int niveauIA;
+
+public Joueur(ArrayList<Integer> possessions, HashSet<Integer> accessibles, int codeCouleur, int  niveauIA){
+	this.possessions = possessions;
+	this.accessibles = accessibles;
+	this.codeCouleur = codeCouleur;
+	this. niveauIA =  niveauIA;
+}
+
+public static Joueur [] initJoueurs(int nbJoueurs, int height, int width){
+	Joueur [] listeJoueurs = new Joueur [nbJoueurs];
+	Random rand= new Random();
+	for(int i=0; i< nbJoueurs; i++){
+		ArrayList<Integer> li= new ArrayList<Integer>();
+		HashSet<Integer> a= new HashSet<Integer>();
+		int couleur =rand.nextInt(6);
+		listeJoueurs[i] = new Joueur(li,a,couleur,0);
+	
+	}
+	listeJoueurs=verifPremieresCases(listeJoueurs);
+	return listeJoueurs;
+}
+
+//Vérification que les cases des joueurs au premier tour sont différentes deux à deux
+public static Joueur [] verifPremieresCases(Joueur [] listeJoueurs){
+	Random rand = new Random();
+	int [] tab= {0,1,2,3,4,5};
+	int k, courant;
+	for(int i=0; i<listeJoueurs.length; i++){
+		k=-1;
+		while(k==-1){
+			courant=rand.nextInt(6);
+			k=tab[courant];
+			tab[courant]=-1;
+		}
+		listeJoueurs[i].setCouleur(k);
+	}
+	
+	return listeJoueurs;
+}
+
+public static void premieresCases(Joueur [] listeJoueurs, int height, int width, int format){
+	for (int i=0; i<listeJoueurs.length; i++){
+		if(i==0){
+			listeJoueurs[i].addIntPossessions(0);
+		}
+		if(i==1){
+			listeJoueurs[i].addIntPossessions((height-1)*100+width-1);
+		}
+		if(i==2){
+			listeJoueurs[i].addIntPossessions(width-1);
+		}
+		if(i==3){
+			listeJoueurs[i].addIntPossessions((height-1)*100);
+		}
+		Tour.completerAccessibles(listeJoueurs[i], listeJoueurs[i].getPossessions(), height, width, format);
+	}
+}
+public ArrayList<Integer> getPossessions() {
+	return possessions;
+}
+
+public int getCouleur() {
+	return codeCouleur;
+}
+
+public void setCouleur(int nouveau) {
+	 this.codeCouleur=nouveau;
+}
+
+
+public void addPossessions(ArrayList<Integer> ajout) {
+	for(int i=0;i<ajout.size();i++)
+	{
+	 this.possessions.add(ajout.get(i));
+	}
+}
+public void addAccessibles(ArrayList<Integer> ajout) {
+	for(int i=0;i<ajout.size();i++){
+		this.accessibles.add(ajout.get(i));
+	}
+}
+public void addIntAccessibles(int ajout) {
+	 this.accessibles.add(ajout);
+}
+public void addIntPossessions(int ajout) {
+	 this.possessions.add(ajout);
+}
+
+public HashSet<Integer> getAccessibles() {
+	return accessibles;
+}
+public int getNiveau(){
+	return this.niveauIA;
+}
+public void setNiveau(int n){
+	this.niveauIA=n;
+}
+}
+
