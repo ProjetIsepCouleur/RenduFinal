@@ -1,0 +1,249 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.NumberFormat;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
+
+public class Dialogue extends JDialog {
+  private boolean sendData;
+  private JLabel heightLabel, formatLabel,  widthLabel;
+  private JRadioButton tranche1, tranche2, tranche3, tranche4,tranche20, tranche21, tranche22, tranche23, tranche24,tranche30, tranche31, tranche32, tranche33, tranche34,tranche40, tranche41, tranche42, tranche43, tranche44;
+  private JComboBox format;
+  private JFormattedTextField height, width;
+
+  public Dialogue(JFrame parent, String title, boolean modal){
+    super(parent, title, modal);
+    this.setSize(550, 500);
+    this.setLocationRelativeTo(null);
+    this.setResizable(false);
+    this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    this.initComponent();
+  }
+
+  public void showDialogue(){
+    this.sendData = false;
+    this.setVisible(true);            
+  }
+  public static void main(String[] args) {
+		Dialogue d = new Dialogue(null, "Paramétrage de la partie", true);
+	    d.showDialogue();
+	}
+
+  private void initComponent(){
+
+	//Zone de choix des dimensions de la grille
+    JPanel panPlateau = new JPanel();
+    panPlateau.setBackground(Color.white);
+    panPlateau.setPreferredSize(new Dimension(480, 70));
+    height = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    height.setPreferredSize(new Dimension(100, 25));
+    panPlateau.setBorder(BorderFactory.createTitledBorder("Taille de grille"));
+    heightLabel = new JLabel("Hauteur (de 1 à 99) :");
+    panPlateau.add(heightLabel);
+    panPlateau.add(height);
+    
+    widthLabel = new JLabel("Largeur (de 1 à 99) : ");
+    width = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    width.setPreferredSize(new Dimension(90, 25));
+    panPlateau.add(widthLabel);
+    panPlateau.add(width);
+
+    //Choix de la forme des cases
+    JPanel panFormat = new JPanel();
+    panFormat.setBackground(Color.white);
+    panFormat.setPreferredSize(new Dimension(220, 60));
+    panFormat.setBorder(BorderFactory.createTitledBorder("Format de la partie"));
+    format = new JComboBox();
+    format.addItem("Carrées");
+    format.addItem("Hexagonales");
+    formatLabel = new JLabel("Cases : ");
+    panFormat.add(formatLabel);
+    panFormat.add(format);
+    
+    JPanel content = new JPanel();
+    content.setBackground(Color.white);
+    content.add(panPlateau);
+    content.add(panFormat);
+   
+    // Choix du nombre de joueur et du niveau IA pour chaque joueur
+    JPanel panNiveau = new JPanel();
+    panNiveau.setBackground(Color.white);
+    panNiveau.setBorder(BorderFactory.createTitledBorder("Joueur n°1"));
+    panNiveau.setPreferredSize(new Dimension(520, 60));
+    tranche1 = new JRadioButton("Joueur humain");
+    tranche1.setSelected(true);
+    //tranche2 = new JRadioButton("IA très facile");
+    //tranche3 = new JRadioButton("IA facile");
+    //tranche4 = new JRadioButton("IA intermédiaire");
+    ButtonGroup bg = new ButtonGroup();
+    bg.add(tranche1);
+    bg.add(tranche2);
+    bg.add(tranche3);
+    bg.add(tranche4);
+    panNiveau.add(tranche1);
+    //panNiveau.add(tranche2);
+    //panNiveau.add(tranche3);
+    //panNiveau.add(tranche4);
+    content.add(panNiveau);
+    
+    JPanel panNiveau2 = new JPanel();
+    panNiveau2.setBackground(Color.white);
+    panNiveau2.setBorder(BorderFactory.createTitledBorder("Joueur n°2"));
+    panNiveau2.setPreferredSize(new Dimension(520, 60));
+    tranche20 = new JRadioButton("Fermé");
+    tranche21 = new JRadioButton("Joueur humain");
+    tranche21.setSelected(true);
+    tranche22 = new JRadioButton("IA très facile");
+    tranche23 = new JRadioButton("IA facile");
+    tranche24 = new JRadioButton("IA intermédiaire");
+    ButtonGroup bg2 = new ButtonGroup();
+    bg2.add(tranche20);
+    bg2.add(tranche21);
+    bg2.add(tranche22);
+    bg2.add(tranche23);
+    bg2.add(tranche24);
+    panNiveau2.add(tranche20);
+    panNiveau2.add(tranche21);
+    panNiveau2.add(tranche22);
+    panNiveau2.add(tranche23);
+    panNiveau2.add(tranche24);
+    content.add(panNiveau2);
+    
+    JPanel panNiveau3 = new JPanel();
+    panNiveau3.setBackground(Color.white);
+    panNiveau3.setBorder(BorderFactory.createTitledBorder("Joueur n°3"));
+    panNiveau3.setPreferredSize(new Dimension(520, 60));
+    tranche30 = new JRadioButton("Fermé");
+    tranche31 = new JRadioButton("Joueur humain");
+    tranche31.setSelected(true);
+    tranche32 = new JRadioButton("IA très facile");
+    tranche33 = new JRadioButton("IA facile");
+    tranche34 = new JRadioButton("IA intermédiaire");
+    ButtonGroup bg3 = new ButtonGroup();
+    bg3.add(tranche30);
+    bg3.add(tranche31);
+    bg3.add(tranche32);
+    bg3.add(tranche33);
+    bg3.add(tranche34);
+    panNiveau3.add(tranche30);
+    panNiveau3.add(tranche31);
+    panNiveau3.add(tranche32);
+    panNiveau3.add(tranche33);
+    panNiveau3.add(tranche34);
+    content.add(panNiveau3);
+    
+    JPanel panNiveau4 = new JPanel();
+    panNiveau4.setBackground(Color.white);
+    panNiveau4.setBorder(BorderFactory.createTitledBorder("Joueur n°4"));
+    panNiveau4.setPreferredSize(new Dimension(520, 60));
+    tranche40 = new JRadioButton("Fermé");
+    tranche41 = new JRadioButton("Joueur humain");
+    tranche41.setSelected(true);
+    tranche42 = new JRadioButton("IA très facile");
+    tranche43 = new JRadioButton("IA facile");
+    tranche44 = new JRadioButton("IA intermédiaire");
+    ButtonGroup bg4 = new ButtonGroup();
+    bg4.add(tranche40);
+    bg4.add(tranche41);
+    bg4.add(tranche42);
+    bg4.add(tranche43);
+    bg4.add(tranche44);
+    panNiveau4.add(tranche40);
+    panNiveau4.add(tranche41);
+    panNiveau4.add(tranche42);
+    panNiveau4.add(tranche43);
+    panNiveau4.add(tranche44);
+    content.add(panNiveau4);
+
+    
+    
+
+    JPanel control = new JPanel();
+    JButton okBouton = new JButton("OK");
+    
+    //Validation  et génération de la partie suivant les paramètres choisis
+    okBouton.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0) {
+        setVisible(false);
+        Couleur [] listeCouleurs = Plateau.initialisationCarreRandom(Integer.parseInt(height.getText()),Integer.parseInt(width.getText()));
+		Joueur [] listeJoueurs= Joueur.initJoueurs(getNbJoueurs(), Integer.parseInt(height.getText()), Integer.parseInt(width.getText()));
+		Joueur.premieresCases(listeJoueurs, Integer.parseInt(height.getText()), Integer.parseInt(width.getText()), format.getSelectedIndex());
+		for(int i=0; i<listeJoueurs.length;i++){
+			listeJoueurs[i].setNiveau(getNiveau(i));
+		}
+			
+        Fenetre fen= new Fenetre(listeCouleurs, listeJoueurs, Integer.parseInt(height.getText()), Integer.parseInt(width.getText()), format.getSelectedIndex());
+      }
+      // interprétation du niveau de l'IA en fonction des boutons cochés
+      public int getNiveau(int joueur){
+    	  switch (joueur){
+    	  case 0:
+    	  
+        return (tranche1.isSelected()) ? 0 : 
+        		(tranche2.isSelected()) ? 1 : 
+        		(tranche3.isSelected()) ? 2 : 
+        		(tranche4.isSelected()) ? 3 : 
+        		0;  
+    	  case 1 :
+          return (tranche20.isSelected()) ? -1 :
+          		(tranche21.isSelected()) ? 0 : 
+          		(tranche22.isSelected()) ? 1 : 
+          		(tranche23.isSelected()) ? 2 : 
+          		(tranche24.isSelected()) ? 3 : 
+          		0;  
+    	  case 2:
+          return (tranche30.isSelected()) ? -1 :
+          		(tranche31.isSelected()) ? 0 : 
+          		(tranche32.isSelected()) ? 1 : 
+          		(tranche33.isSelected()) ? 2 : 
+          		(tranche34.isSelected()) ? 3 : 
+          		0;  
+        
+    	  case 3 :
+          return (tranche40.isSelected()) ? -1 :
+          		(tranche41.isSelected()) ? 0 : 
+          		(tranche42.isSelected()) ? 1 : 
+          		(tranche43.isSelected()) ? 2 : 
+          		(tranche44.isSelected()) ? 3 : 
+          		0;
+          }
+    	  return 0;
+      }
+      
+
+      public int getNbJoueurs(){
+    	  int compteur=0;
+    	  for(int i=0; i<4;i++){
+    		  if(getNiveau(i)!=-1){
+    			  compteur=compteur+1;
+    		  }
+    	  }
+          return compteur;
+        }  
+    });
+
+    JButton cancelBouton = new JButton("Annuler");
+    cancelBouton.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent arg0) {
+        setVisible(false);
+      }      
+    });
+
+    control.add(okBouton);
+    control.add(cancelBouton);
+
+    this.getContentPane().add(content, BorderLayout.CENTER);
+    this.getContentPane().add(control, BorderLayout.SOUTH);
+  }  
+}
