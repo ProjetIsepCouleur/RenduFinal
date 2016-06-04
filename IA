@@ -1,0 +1,64 @@
+import java.util.Random;
+
+public class IA {
+
+// Choisit le mode de sélection de couleur en fonction du niveau de l'IA, et exécute le tour 
+public static void testPersonalite(Couleur [] listeCouleurs,int [] couleursAutorisees, Joueur [] listeJoueurs, Joueur j, int height, int width, int format){
+	int niveau = j.getNiveau();
+	int c=0;
+	switch (niveau){
+	case 0:
+		return;
+	case 1:
+		c= aleatoire(couleursAutorisees);
+		break;
+	case 3:
+		c=captureMaximum(listeCouleurs, couleursAutorisees, j);
+		break;
+	case 2:
+		c=perturbationMaximum(listeCouleurs, couleursAutorisees, j, listeJoueurs);
+		break;
+	}
+	Tour.boucleAjout(j, listeCouleurs[couleursAutorisees[c]],height,width, format);
+	int stockage=j.getCouleur();
+	j.setCouleur(couleursAutorisees[c]);
+	couleursAutorisees[c]=stockage;
+}
+// IA très facile
+public static int aleatoire(int [] couleurAutorisees){
+	Random rand= new Random();
+	return rand.nextInt(couleurAutorisees.length);
+}
+// IA intermédiaire
+public static int captureMaximum(Couleur [] listeCouleurs, int [] couleurAutorisees, Joueur j ){
+	int compteur=0;
+	int pointeur=0;
+	int courant;
+	for(int i=0; i<couleurAutorisees.length;i++){
+		courant=Tour.trouverAjoutPossessions (j,  listeCouleurs[couleurAutorisees[i]]).size();
+		if(courant>compteur){
+			compteur=courant;
+			pointeur=i;
+		}
+	}
+	return pointeur;
+}
+// IA facile
+public static int perturbationMaximum(Couleur [] listeCouleurs,int [] couleurAutorisees, Joueur ordinateur, Joueur [] listeJoueurs){
+	int compteur=0;
+	int pointeur=0;
+	int courant;
+	for(int k=0;k<listeJoueurs.length;k++){
+		if(listeJoueurs[k]!=ordinateur){
+			for(int i=0; i<couleurAutorisees.length;i++){
+				courant=Tour.trouverAjoutPossessions (listeJoueurs[k],  listeCouleurs[couleurAutorisees[i]]).size();
+				if(courant>compteur){
+					compteur=courant;
+					pointeur=i;
+				}
+			}
+		}
+	}
+	return pointeur;
+}
+}
