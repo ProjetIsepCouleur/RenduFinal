@@ -1,0 +1,211 @@
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
+import java.awt.Polygon;
+import java.awt.Robot;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+
+public class PanelCases extends JPanel implements MouseListener{ 
+
+Couleur [] listeCouleurs;
+int [] couleursAutorisees;
+Joueur [] listeJoueurs;
+int joueur, format, height, width;
+
+
+public PanelCases(Couleur [] listeCouleurs,int [] couleursAutorisees,Joueur [] listeJoueurs, int height, int width, int format) {
+    this.listeCouleurs = listeCouleurs;
+    this.couleursAutorisees = couleursAutorisees;
+    this.listeJoueurs = listeJoueurs;
+    this.height= height;
+    this.width= width;
+    this.format= format;
+    this.addMouseListener(this);
+    
+}
+public void paintComponent(Graphics g){
+	super.paintComponent(g);
+	if(format==0){
+		affichageCarre( g, listeCouleurs, listeJoueurs, joueur, this.getWidth(), this.getHeight(), height, width);
+	}
+	if(format==1){
+		affichageHexagones( g, listeCouleurs, listeJoueurs, joueur,  this.getWidth(), this.getHeight(), height, width);
+	} 
+}
+  
+public void mousePressed(MouseEvent e) { 
+	try {
+		Robot robot=new Robot();
+		PointerInfo pointer= MouseInfo.getPointerInfo();
+		Point point = pointer.getLocation();
+		Color color= robot.getPixelColor((int) point.getX(),(int) point.getY());
+			 
+		int taille= height*width/2;
+		int codeCouleur =Tour.identifierListe(listeCouleurs, color);
+		Joueur j=listeJoueurs[joueur];
+		Couleur c= listeCouleurs[codeCouleur];
+			
+		if(Tour.coupLegal(listeJoueurs, codeCouleur, j)){
+			System.out.println("Coup illégal");
+		}else{
+			Tour.boucleAjout(j,c,height,width, format);
+			for(int k=0;k<couleursAutorisees.length;k++){
+			if(couleursAutorisees[k]==codeCouleur){
+				couleursAutorisees[k]=j.getCouleur();
+			}
+		}
+		j.setCouleur(codeCouleur);
+		repaint();
+		if(Tour.verifVictoire(j, taille)){
+			System.out.println("Le joueur n°"+(joueur+1)+" a gagné !");
+			return;
+		}
+		this.joueur=Tour.alternanceJoueurs(listeJoueurs, j);
+		while(listeJoueurs[joueur].getNiveau()!=0){
+			IA.testPersonalite(listeCouleurs, couleursAutorisees, listeJoueurs, listeJoueurs[joueur], height, width, format);
+			if(Tour.verifVictoire(listeJoueurs[joueur], taille)){
+				System.out.println("Le joueur n°"+(joueur+1)+" a gagné !");
+				return;
+			}
+			this.joueur=Tour.alternanceJoueurs(listeJoueurs, listeJoueurs[joueur]);
+		}
+		repaint();
+		}
+	} catch (AWTException ex) {
+	}
+}
+  
+public static void affichageCarre(Graphics g, Couleur [] listeCouleurs,Joueur [] listeJoueurs, int joueur,  int panelWidth, int panelHeight, int height, int width){
+	int i,j;
+	int posLigne, posColonne;
+	ArrayList<Integer> a;
+	// On parcourt chaque liste de couleur
+	for (j=0;j<6;j++){
+		i=0;
+		a=listeCouleurs[j].getListe();
+		g.setColor(listeCouleurs[j].getCouleur());
+		// on décode les coordonnées de chaque case de la liste, puis on la trace
+		while(i<a.size()){
+			posLigne=a.get(i)%100;
+			posColonne=Math.floorDiv(a.get(i), 100);
+			g.fillRect(posLigne*panelWidth/width, posColonne*panelHeight/height, panelWidth/width, panelHeight/height);
+			i++;
+		}
+	}
+	// idem pour les cases possédées par un joueur
+	for(j=0;j<listeJoueurs.length;j++){
+			g.setColor(listeCouleurs[listeJoueurs[j].getCouleur()].getCouleur());
+			a=listeJoueurs[j].getPossessions();
+			i=0;
+			while(i<a.size()){
+				  posLigne=a.get(i)%100;
+				  posColonne=Math.floorDiv(a.get(i), 100);
+				  
+				  g.fillRect(posLigne*panelWidth/width, posColonne*panelHeight/height, panelWidth/width, panelHeight/height);
+				  i++;
+			}
+	}
+	a=listeJoueurs[joueur].getPossessions();
+	g.setColor(Color.black);
+	posLigne=a.get(0)%100*panelWidth/width+panelWidth/width/3;
+	posColonne=(Math.floorDiv(a.get(0), 100)+1)*panelHeight/height-2*panelHeight/height/3;
+	g.fillOval(posLigne, posColonne, panelWidth/width/3, panelHeight/height/3);
+		 
+	for (j=0;j<6;j++){
+		i=0;
+		a=listeCouleurs[j].getListe();
+		while(i<a.size()){
+			g.setColor(Color.black);
+			posLigne=a.get(i)%100;
+			posColonne=Math.floorDiv(a.get(i), 100);
+			g.drawRect(posLigne*panelWidth/width, posColonne*panelHeight/height, panelWidth/width, panelHeight/height);
+			i++;
+		}
+	}
+}
+  
+public static void affichageHexagones(Graphics g, Couleur [] listeCouleurs,Joueur [] listeJoueurs,  int joueur, int panelWidth, int panelHeight, int height, int width){
+	int i,j;
+	int posLigne, posColonne;
+	ArrayList<Integer> a;
+	
+	double rayon=Math.min(panelWidth/width, panelHeight/height)/1.8;
+	int decalage;
+	  
+	for (j=0;j<6;j++){
+		i=0;
+		a=listeCouleurs[j].getListe();
+		g.setColor(listeCouleurs[j].getCouleur());
+		while(i<a.size()){
+			posLigne=a.get(i)%100;
+			posColonne=Math.floorDiv(a.get(i), 100);
+			decalage=(posColonne+1)%2;
+			Polygon p = new Polygon();
+			for (int k = 0; k < 6; k++){
+				p.addPoint((int) (rayon+decalage*rayon*Math.sqrt(3)/2+posLigne*rayon*1.7 + rayon * Math.cos( (k * 2 + 1) * Math.PI / 6) ), (int) (rayon + posColonne*rayon*1.5 + rayon * Math.sin((k * 2 + 1) * Math.PI / 6)));
+            }
+			g.fillPolygon(p);
+			i++;
+		}	
+	}
+	for(j=0;j<listeJoueurs.length;j++){
+		g.setColor(listeCouleurs[listeJoueurs[j].getCouleur()].getCouleur());
+		  
+		a=listeJoueurs[j].getPossessions();
+		i=0;
+		while(i<a.size()){
+			  posLigne=a.get(i)%100;
+			  posColonne=Math.floorDiv(a.get(i), 100);
+			  decalage=(posColonne+1)%2;
+			  Polygon p = new Polygon();
+			  for (int k = 0; k < 6; k++){
+				  p.addPoint((int) (rayon+decalage*rayon*Math.sqrt(3)/2+posLigne*rayon*1.7 + rayon * Math.cos( (k * 2 + 1) * Math.PI / 6) ), (int) (rayon + posColonne*rayon*1.5 + rayon * Math.sin((k * 2 + 1) * Math.PI / 6)));
+			  }
+			  g.fillPolygon(p);
+			  i++;
+		}
+	}
+	g.setColor(Color.black);
+	for (j=0;j<6;j++){
+		i=0;
+		a=listeCouleurs[j].getListe();
+		while(i<a.size()){
+			posLigne=a.get(i)%100;
+			posColonne=Math.floorDiv(a.get(i), 100);
+			decalage=(posColonne+1)%2;
+			Polygon p = new Polygon();
+			for (int k = 0; k < 6; k++){
+				p.addPoint((int) (rayon+decalage*rayon*Math.sqrt(3)/2+posLigne*rayon*1.7 + rayon * Math.cos( (k * 2 + 1) * Math.PI / 6) ), (int) (rayon + posColonne*rayon*1.5 + rayon * Math.sin((k * 2 + 1) * Math.PI / 6)));
+            }
+			g.drawPolygon(p);
+			i++;
+		}
+	}
+}
+		
+@Override
+public void mouseClicked(MouseEvent e) {
+	
+}
+
+@Override
+public void mouseEntered(MouseEvent e) {
+	
+}
+
+@Override
+public void mouseExited(MouseEvent e) {
+	
+}
+@Override
+public void mouseReleased(MouseEvent e) {
+	
+}      
+ 
+}
