@@ -1,0 +1,137 @@
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+public class Tour {
+	
+// Fonction renvoyant le numéro du joueur suivant
+public static int alternanceJoueurs(Joueur[] listeJoueurs, Joueur precedent){	
+	int i;
+	for (i=0;i<listeJoueurs.length-1;i++){
+		if (listeJoueurs[i]==precedent){
+			return i+1;
+		}
+	}
+	return 0;
+}
+// Fonction déterminant les cases adjacentes de la couleur choisie
+public static ArrayList<Integer> trouverAjoutPossessions (Joueur j, Couleur c){
+	ArrayList<Integer> ajout= new ArrayList<Integer>();
+	HashSet<Integer> accessibles= j.getAccessibles();
+	for (int position : c.getListe()){
+		if(accessibles.contains(position)){
+			ajout.add(position);
+		}
+	}
+	return ajout;
+}
+// Fonction trouvant les cases adjacentes à celles qui viennent d'être conquises
+public static void completerAccessibles (Joueur j, ArrayList<Integer> ajout, int height, int width, int format){
+	int taille= ajout.size();
+	int i,courant;
+	// On distingue les cas en fonction de la forme des cases
+	switch(format){
+	case 0:
+		for (i=0;i<taille;i++){
+			courant=ajout.get(i);
+		
+			if(!(Math.floorDiv(courant,100)==0)){
+				j.addIntAccessibles(courant-100);
+			}
+			if(!(courant%100==0)){
+				j.addIntAccessibles(courant-1);
+			}
+			if(!(Math.floorDiv(courant,100)==height-1)){
+				j.addIntAccessibles(courant+100);
+			}
+			if(!(courant%100==width-1)){
+				j.addIntAccessibles(courant+1);
+			}
+		}
+		break;
+	case 1 :
+		int decalage;
+		for (i=0;i<taille;i++){
+			courant=ajout.get(i);
+			decalage=(Math.floorDiv(courant, 100)+1)%2;
+			if(!(Math.floorDiv(courant,100)==0)){
+				j.addIntAccessibles(courant-100);
+				if(decalage==1&&!(courant%100==width-1)){
+					j.addIntAccessibles(courant-99);
+				}
+				if(decalage==0&&!(courant%100==0)){
+					j.addIntAccessibles(courant-101);
+				}
+			}
+			if(!(courant%100==0)){
+				j.addIntAccessibles(courant-1);
+			}
+			if(!(Math.floorDiv(courant,100)==height-1)){
+				j.addIntAccessibles(courant+100);
+				if(decalage==1&&!(courant%100==width-1)){
+					j.addIntAccessibles(courant+101);
+				}
+				if(decalage==0&&!(courant%100==0)){
+					j.addIntAccessibles(courant+99);
+				}
+			}
+			if(!(courant%100==width-1)){
+				j.addIntAccessibles(courant+1);
+			}
+		}
+	}
+}
+// Fonction réitérant l'attribution de cases jusqu'à ce que tous les groupes aient été ajoutés
+public static void boucleAjout (Joueur j, Couleur c, int height,int width, int format){
+	ArrayList<Integer> ajout=trouverAjoutPossessions(j, c);
+	if(!ajout.isEmpty()){
+		j.addPossessions(ajout);
+		c.viderCouleur(ajout);
+		completerAccessibles (j, ajout,height, width, format);
+		boucleAjout(j, c, height, width, format);
+	}
+}
+
+public static boolean verifVictoire(Joueur j, int taille){
+	if(j.getPossessions().size()>=taille){
+		return true;
+	}
+	return false;
+}
+
+public static boolean coupLegal(Joueur []listeJoueurs, int codeCouleur, Joueur j){
+	for(int i=0;i<listeJoueurs.length;i++){
+		if(listeJoueurs[i].getCouleur()==codeCouleur&&!listeJoueurs[i].equals(j)){
+			return true;
+		}
+	}
+	return false;
+}
+// Permet de retrouver une liste Couleur à partir d'un code RGB
+public static int identifierListe(Couleur [] listeCouleurs, Color C){
+	int i;
+	for (i=0;i<6;i++){
+		if(listeCouleurs[i].getCouleur().equals(C)){
+			return i;
+		}
+	}
+	return 1;
+}
+// Génère la liste des couleurs autorisées en début de partie
+public static int [] trouverCouleursAutorisees(Couleur [] listeCouleurs, Joueur [] listeJoueurs){
+	int [] tab= {0,1,2,3,4,5};
+	int [] couleursAutorisees = new int [6-listeJoueurs.length];
+	for (int i=0;i<listeJoueurs.length;i++){
+		tab[listeJoueurs[i].getCouleur()]=-1;
+	}
+	int j=0;
+	for(int k=0;k<6;k++){
+		if(tab[k]!=-1){
+			couleursAutorisees[j]=tab[k];
+			j++;
+		}
+	}
+	return couleursAutorisees;
+}
+
+}
